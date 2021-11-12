@@ -1,0 +1,8 @@
+# Fundamentals
+numpy
+tqdm
+scipy
+pytorch
+audio2numpy
+transformers
+librosa
