@@ -6,7 +6,6 @@
 *.zip
 *.cu
 *.pt
-*.pth
 *.pdf
 *.tsv
 
