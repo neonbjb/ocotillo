@@ -7,6 +7,21 @@ from transformers import GPT2Model, GPT2Config
 
 from inference_model import GPT2InferenceModel
 
+# Pretrained model kwargs.
+MODEL_CONFIGS = {
+    'medium': {
+        'layers': 12,
+        'model_dim': 512,
+        'heads': 8
+    },
+    'large': {
+        'max_symbols_per_phrase': 500,
+        'max_mel_frames': 3200,
+        'layers': 20,
+        'model_dim': 512,
+        'heads': 8
+    }
+}
 
 class ResBlock(nn.Module):
     """
@@ -67,8 +82,8 @@ class GptAsrHf(nn.Module):
     Core module that encapsulates a set of embeddings, a MEL encoder, a GPT-style transformer and the head needed to
     make its output useful.
     """
-    def __init__(self, layers=8, model_dim=512, heads=8, max_symbols_per_phrase=800, max_mel_frames=3000,
-                 checkpointing=True, number_text_tokens=512, start_token=511, stop_token=0):
+    def __init__(self, layers=8, model_dim=512, heads=8, max_symbols_per_phrase=350, max_mel_frames=1600,
+                 number_text_tokens=256, start_token=255, stop_token=0, checkpointing=False):
         super().__init__()
         self.number_text_tokens = number_text_tokens
         self.start_token = start_token
@@ -170,7 +185,7 @@ class GptAsrHf(nn.Module):
         loss_text = F.cross_entropy(text_logits, text_targets.long())
         return loss_text.mean(), text_logits
 
-    def inference(self, mel_inputs, do_sample=False, temperature=1.0, num_beams=8):
+    def inference(self, mel_inputs, num_beams=8):
         """
         Performs inference by transcribing mel_inputs into text. Returns the text tokens.
         """
@@ -186,8 +201,9 @@ class GptAsrHf(nn.Module):
         # "fake_inputs" are stand-ins for the MEL frames, which will be injected with the prep_inputs function above.
         fake_inputs = torch.full((mel_emb.shape[0],mel_emb.shape[1]+1,), fill_value=1, dtype=torch.long, device=mel_inputs.device)
         fake_inputs[:,-1] = self.start_token
-        gen = self.inference_model.generate(fake_inputs, do_sample=do_sample, bos_token_id=self.start_token, pad_token_id=0, eos_token_id=0,
-                                            max_length=self.max_symbols_per_phrase+mel_emb.shape[1], temperature=temperature, num_beams=num_beams, use_cache=True)
+        gen = self.inference_model.generate(fake_inputs, bos_token_id=self.start_token, pad_token_id=0, eos_token_id=0,
+                                            max_length=self.max_symbols_per_phrase+mel_emb.shape[1], num_beams=num_beams,
+                                            use_cache=True)
         return gen[:, mel_emb.shape[1]+1:]
 
 

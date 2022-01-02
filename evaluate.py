@@ -5,10 +5,10 @@ from tqdm import tqdm
 
 from dataset import AudioFolderDataset
 from gpt_asr_hf import GptAsrHf, MODEL_CONFIGS
-from stft import MELSTFT
-from utils import sequence_to_text
+from mel import MEL
 import torch
 
+from tokenizer import VoiceBpeTokenizer
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -18,11 +18,6 @@ if __name__ == "__main__":
     parser.add_argument('--resume', default=0, type=int, help='Skip the first <n> audio tracks.')
     parser.add_argument('--batch_size', default=8, type=int, help='Number of audio files to process at a time. Larger batches are more efficient on a GPU.')
     parser.add_argument('--model_type', default='medium', help='Name of the MODEL_CONFIGS entry describing this model.')
-    parser.add_argument('--do_sampling', default=False, type=bool, help='Whether or not the model should randomly sample from the models predictions. If '
-                                                             'False, the model simply picks the most likely prediction.')
-    parser.add_argument('--temperature', default='1.0', type=float, help='The softmax temperature to use. Lower values make the model more ' \
-                                                            'likely to "explore" alternative transcription possibilities. Only effective '
-                                                             'if do_sampling is enabled.')
     parser.add_argument('--num_beams', default=1, type=int, help='The number of beams to use when decoding with beam search. Higher numbers of beams '
                                                        'improve accuracy but take longer to compute. This is subject to diminishing returns.')
     parser.add_argument('--cuda', default=-1, type=int, help='The cuda device to perform inference on. -1 (or default) means use the CPU.')
@@ -30,10 +25,11 @@ if __name__ == "__main__":
 
     model = GptAsrHf(**MODEL_CONFIGS[args.model_type])
     model.load_state_dict(torch.load(args.model_path))
-    stft = MELSTFT()
+    stft = MEL()
+    tokenizer = VoiceBpeTokenizer()
 
-    dataset = AudioFolderDataset(args.path, sampling_rate=22050, pad_to=358395, skip=args.resume)
-    dataloader = DataLoader(dataset, args.batch_size, num_workers=2)
+    dataset = AudioFolderDataset(args.path, sampling_rate=22050, pad_to=220500, skip=args.resume)
+    dataloader = DataLoader(dataset, args.batch_size, num_workers=0)
 
     if args.cuda >= 0:
         model = model.cuda(args.cuda)
@@ -46,9 +42,9 @@ if __name__ == "__main__":
             if args.cuda >= 0:
                 clip = clip.cuda(args.cuda)
             mels = stft(clip)
-            tokens = model.inference(mels, do_sample=args.do_sampling, temperature=args.temperature, num_beams=args.num_beams)
+            tokens = model.inference(mels, num_beams=args.num_beams)
             for b in range(tokens.shape[0]):
-                text = sequence_to_text(tokens[b]).replace('_', '')
+                text = tokenizer.decode(tokens[b])
                 output.write(f'{batch["path"][b]}\t{text}\n')
             output.flush()
 
