@@ -48,12 +48,29 @@ class Transcriber:
             self.mel = self.mel.cuda(cuda_device)
 
     def transcribe(self, audio_data, sample_rate):
+        """
+        Transcribes audio_data at the given sample_rate. audio_data is expected to be a list of floats, a torch tensor
+        or a numpy array. audio_data must be either 1d mono audio data or 2d stereo data (one channel is thrown out).
+        The channel dimension must be first. audio_data must be normalized to [-1,1]. One-shot transcription is
+        length-limited by the model.
+        """
+        if not isinstance(audio_data, torch.Tensor):
+            audio_data = torch.tensor(audio_data)  # Valid inputs are either a list of floats, a torch tensor or a
+                                                   # numpy array.
         audio_data = audio_data.unsqueeze(0)
         return self.transcribe_batch(audio_data, sample_rate)[0]
 
     def transcribe_batch(self, audio_data, sample_rate):
+        """
+        Transcribes audio_data at the given sample_rate. audio_data is expected to be a torch tensor
+        or a numpy array. audio_data must be either 2d mono audio data or 3d stereo data (one channel is thrown out).
+        The batch dimension is first. The channel dimension is second. audio_data must be normalized to [-1,1].
+        One-shot transcription is  length-limited by the model.
+        """
         if sample_rate != self.mel.mel_stft.sample_rate:
             audio_data = torchaudio.functional.resample(audio_data, sample_rate, self.mel.mel_stft.sample_rate)
+        if not isinstance(audio_data, torch.Tensor):
+            audio_data = torch.tensor(audio_data)  # This makes valid inputs either a torch tensor a numpy array.
         mels = self.mel(audio_data)
         tokens = self.model.inference(mels, num_beams=self.num_beams)
         return [self.tokenizer.decode(toks) for toks in tokens]

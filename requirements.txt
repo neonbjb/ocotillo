@@ -1,6 +1,7 @@
 tqdm
 scipy
-pytorch
+torch>=1.8
+torchaudio>0.9
 audio2numpy
 transformers
 librosa
