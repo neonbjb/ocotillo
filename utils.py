@@ -1,10 +1,9 @@
 import pathlib
 
+import numpy as np
 import torch
 import torchaudio
-import numpy as np
 from audio2numpy import open_audio
-from tokenizers import Tokenizer
 from scipy.io.wavfile import read
 
 
