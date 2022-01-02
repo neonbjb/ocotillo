@@ -2,7 +2,6 @@
 *.png
 *.jpg
 *.gif
-*.pth
 *.pytorch
 *.zip
 *.cu
