@@ -55,8 +55,8 @@ class Transcriber:
         length-limited by the model.
         """
         if not isinstance(audio_data, torch.Tensor):
-            audio_data = torch.tensor(audio_data)  # Valid inputs are either a list of floats, a torch tensor or a
-                                                   # numpy array.
+            audio_data = torch.tensor(audio_data, dtype=torch.float)  # Valid inputs are either a list of floats,
+                                                                      # a torch tensor or a numpy array.
         audio_data = audio_data.unsqueeze(0)
         return self.transcribe_batch(audio_data, sample_rate)[0]
 
@@ -70,7 +70,7 @@ class Transcriber:
         if sample_rate != self.mel.mel_stft.sample_rate:
             audio_data = torchaudio.functional.resample(audio_data, sample_rate, self.mel.mel_stft.sample_rate)
         if not isinstance(audio_data, torch.Tensor):
-            audio_data = torch.tensor(audio_data)  # This makes valid inputs either a torch tensor a numpy array.
+            audio_data = torch.tensor(audio_data, dtype=torch.float)  # This makes valid inputs either a torch tensor a numpy array.
         mels = self.mel(audio_data)
         tokens = self.model.inference(mels, num_beams=self.num_beams)
         return [self.tokenizer.decode(toks) for toks in tokens]
