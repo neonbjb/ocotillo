@@ -28,7 +28,7 @@ class Transcriber:
                  pretrained_models_download_path='.weights/'):
         self.tokenizer = VoiceBpeTokenizer(tokenizer_params_path)
         self.mel = MEL(mel_norms_path)
-        self.model = GptAsrHf(**MODEL_CONFIGS[model_config])
+        self.model = GptAsrHf(**MODEL_CONFIGS[model_config]).eval()
         if model_path is None:
             pretrained_model_file = f'{pretrained_models_download_path}/{model_config}.pth'
             if not os.path.exists(pretrained_model_file):

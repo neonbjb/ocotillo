@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('--cuda', default=-1, type=int, help='The cuda device to perform inference on. -1 (or default) means use the CPU.')
     args = parser.parse_args()
 
-    model = GptAsrHf(**MODEL_CONFIGS[args.model_type])
+    model = GptAsrHf(**MODEL_CONFIGS[args.model_type]).eval()
     model.load_state_dict(torch.load(args.model_path))
     stft = MEL()
     tokenizer = VoiceBpeTokenizer()
