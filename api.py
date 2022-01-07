@@ -11,6 +11,7 @@ from tokenizer import VoiceBpeTokenizer
 
 PRETRAINED_MODELS_URLS = {
     'medium': 'https://www.nonint.com/downloads/asr/gpt_asr_medium.pth',
+    'large': 'https://www.nonint.com/downloads/asr/gpt_asr_large.pth',
 }
 
 
@@ -46,6 +47,9 @@ class Transcriber:
         if on_cuda:
             self.model = self.model.cuda(cuda_device)
             self.mel = self.mel.cuda(cuda_device)
+            self.device = 'cuda'
+        else:
+            self.device = 'cpu'
 
     def transcribe(self, audio_data, sample_rate):
         """
@@ -55,9 +59,8 @@ class Transcriber:
         length-limited by the model.
         """
         if not isinstance(audio_data, torch.Tensor):
-            audio_data = torch.tensor(audio_data, dtype=torch.float)  # Valid inputs are either a list of floats,
-                                                                      # a torch tensor or a numpy array.
-        audio_data = audio_data.unsqueeze(0)
+            audio_data = torch.tensor(audio_data, dtype=torch.float)
+        audio_data = audio_data.to(self.device).unsqueeze(0)
         return self.transcribe_batch(audio_data, sample_rate)[0]
 
     def transcribe_batch(self, audio_data, sample_rate):
@@ -67,10 +70,11 @@ class Transcriber:
         The batch dimension is first. The channel dimension is second. audio_data must be normalized to [-1,1].
         One-shot transcription is  length-limited by the model.
         """
-        if sample_rate != self.mel.mel_stft.sample_rate:
-            audio_data = torchaudio.functional.resample(audio_data, sample_rate, self.mel.mel_stft.sample_rate)
         if not isinstance(audio_data, torch.Tensor):
             audio_data = torch.tensor(audio_data, dtype=torch.float)  # This makes valid inputs either a torch tensor a numpy array.
+        if sample_rate != self.mel.mel_stft.sample_rate:
+            audio_data = torchaudio.functional.resample(audio_data, sample_rate, self.mel.mel_stft.sample_rate)
+        audio_data = audio_data.to(self.device)
         mels = self.mel(audio_data)
         tokens = self.model.inference(mels, num_beams=self.num_beams)
         return [self.tokenizer.decode(toks) for toks in tokens]
