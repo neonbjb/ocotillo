@@ -109,7 +109,7 @@ class GptAsrHf(nn.Module):
         # This model uses its own positional embeddings, which helps discriminate between text and audio MELs.
         self.text_pos_embedding = nn.Embedding(self.max_symbols_per_phrase + 1, model_dim)
         self.mel_pos_embedding = nn.Embedding(self.max_mel_frames, model_dim)
-        self.text_solo_embedding = nn.Parameter(torch.randn(1,1,512) * self.gpt.config.initializer_range, requires_grad=True)
+        self.text_solo_embedding = nn.Parameter(torch.randn(1,1,model_dim) * self.gpt.config.initializer_range, requires_grad=True)
 
         # Head layers
         self.final_norm = nn.LayerNorm(model_dim)
