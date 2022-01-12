@@ -14,10 +14,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', help='Input folder containing audio files you want transcribed.')
     parser.add_argument('--model_path', help='Pretrained model path.')
+    parser.add_argument('--model_type', default='large', help='Name of the MODEL_CONFIGS entry describing this model.')
     parser.add_argument('--output_file', default='results.tsv', help='Where transcriptions will be placed.')
     parser.add_argument('--resume', default=0, type=int, help='Skip the first <n> audio tracks.')
     parser.add_argument('--batch_size', default=8, type=int, help='Number of audio files to process at a time. Larger batches are more efficient on a GPU.')
-    parser.add_argument('--model_type', default='medium', help='Name of the MODEL_CONFIGS entry describing this model.')
     parser.add_argument('--num_beams', default=1, type=int, help='The number of beams to use when decoding with beam search. Higher numbers of beams '
                                                        'improve accuracy but take longer to compute. This is subject to diminishing returns.')
     parser.add_argument('--cuda', default=-1, type=int, help='The cuda device to perform inference on. -1 (or default) means use the CPU.')

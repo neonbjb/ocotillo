@@ -8,3 +8,5 @@ tokenizers
 librosa
 unidecode
 inflect
+
+gdown  # For fetching pre-trained models. Can be disabled if you want to download your own.

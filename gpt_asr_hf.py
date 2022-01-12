@@ -9,11 +9,21 @@ from inference_model import GPT2InferenceModel
 
 # Pretrained model kwargs.
 MODEL_CONFIGS = {
+    # 21M params, 5.0B MAC
+    'small': {
+        'max_symbols_per_phrase': 500,
+        'max_mel_frames': 3200,
+        'layers': 10,
+        'model_dim': 384,
+        'heads': 6,
+    },
+    # 43M params, 10.2B MAC
     'medium': {
         'layers': 12,
         'model_dim': 512,
         'heads': 8
     },
+    # 68M params, 16.4B MAC
     'large': {
         'max_symbols_per_phrase': 500,
         'max_mel_frames': 3200,
@@ -208,6 +218,12 @@ class GptAsrHf(nn.Module):
 
 
 if __name__ == '__main__':
-    gpt = GptAsrHf(max_symbols_per_phrase=250, max_mel_frames=1400, layers=16, model_dim=512, heads=8)
-    l = gpt(torch.randn(2,80,640), torch.randint(high=100, size=(2,80)))
-    gpt.text_only(torch.randint(high=100, size=(2,120)))
+    # Profile a forward pass.
+    model = 'medium'
+    gpt = GptAsrHf(**MODEL_CONFIGS[model])
+    speech = torch.randn(1, 80, 860)  # ~10 seconds of speech
+    text = torch.randint(0, 256, (1,120))  # ~180 characters of text
+    from torchprofile import profile_macs
+    macs = profile_macs(gpt, args=(speech, text))
+    params = sum(p.numel() for p in gpt.parameters())
+    print(f"Params: {params / 1000000}M, MACs: {macs / 1000000000}B")
