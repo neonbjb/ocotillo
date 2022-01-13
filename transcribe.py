@@ -1,3 +1,8 @@
+"""
+A utility script for transcribing an entire folder of audio files. This script was used to transcribe the files from
+the librispeech and CV test datasets; the results were then separately fed through a word error rate script.
+"""
+
 import argparse
 
 from torch.utils.data import DataLoader
