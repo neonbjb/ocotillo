@@ -40,16 +40,36 @@ below.
 
 ## Performance
 
-| Model                      | Params (Million) | MAC (Billion) | WER Librispeech Clean Test | WER Mozilla CV Test |
-|----------------------------|------------------|---------------|----------------------------|---------------------|
-| ocotillo small (Distilled) | 21               | 5.0           |                            |                     |
-| ocotillo large             | 68               | 16.4          |                            |                     |
+There are currently two ocotillo models: large, a 68M parameter model, and small, a 21M parameter model that was distilled
+from large.
+
+| Model                      | Params (Million) | MAC (Billion) | WER Librispeech Clean Test | WER Mozilla CV Test | RTPR
+|----------------------------|------------------|---------------|----------------------------|---------------------|-----------------------------
+| ocotillo small 1-beam      | 21               | 5.0           | 2.6                        |                     | 720                        
+| ocotillo small 8-beam      | 21               | 5.0           | 1.92                       |                     | 140.8                     
+| ocotillo large 1-beam      | 68               | 16.4          | 1.47                       |                     | 441.6
+| ocotillo large 8-beam      | 68               | 16.4          | 1.32                       |                     | 72.8
 | wav2vec 960h*              |                  |               | 1.8                        |                     |
 | deepspeech**               |                  |               | 7.1                        | N/A                 |
 
 *: Best score; Large-LV60k from https://arxiv.org/pdf/2006.11477v3.pdf. Model size metrics computed from HuggingFace implementation (does not include Language Model).
 
 **: https://github.com/SeanNaren/deepspeech.pytorch/releases
+
+### Real time processing rate (RTPR)
+
+This is the amount of seconds of audio the model can transcribe with one second of compute. A RTPR of 1 means that the
+model can process in realtime. A value of 100 means that the model can process audio at 100x real time. The values in
+the above table were averaged across the librispeech-test-clean dataset from an RTX 3090. In addition to the above values,
+I measured the RTPR of ocotillo-small and ocotillo-large on a Ryzen 5800x CPU below:
+
+| Model                     | RTPR on CPU
+|---------------------------|-----------------------------
+| ocotillo small 1-beam     |
+| ocotillo large 1-beam     |
+
+*Note that audio inputs to the model are padded to the same size as the largest clip in a batch. This results in
+slightly faster results than you might see in real tests, since this padding does not directly result in text output.*
 
 ## Instructions for use
 

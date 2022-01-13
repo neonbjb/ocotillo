@@ -17,12 +17,6 @@ MODEL_CONFIGS = {
         'model_dim': 384,
         'heads': 6,
     },
-    # 43M params, 10.2B MAC
-    'medium': {
-        'layers': 12,
-        'model_dim': 512,
-        'heads': 8
-    },
     # 68M params, 16.4B MAC
     'large': {
         'max_symbols_per_phrase': 500,
@@ -219,7 +213,7 @@ class GptAsrHf(nn.Module):
 
 if __name__ == '__main__':
     # Profile a forward pass.
-    model = 'medium'
+    model = 'small'
     gpt = GptAsrHf(**MODEL_CONFIGS[model])
     speech = torch.randn(1, 80, 860)  # ~10 seconds of speech
     text = torch.randint(0, 256, (1,120))  # ~180 characters of text

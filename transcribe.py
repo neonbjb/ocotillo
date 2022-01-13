@@ -4,6 +4,8 @@ the librispeech and CV test datasets; the results were then separately fed throu
 """
 
 import argparse
+import os
+from time import time
 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -33,23 +35,32 @@ if __name__ == "__main__":
     stft = MEL()
     tokenizer = VoiceBpeTokenizer()
 
-    dataset = AudioFolderDataset(args.path, sampling_rate=22050, pad_to=220500, skip=args.resume)
-    dataloader = DataLoader(dataset, args.batch_size, num_workers=0)
+    dataset = AudioFolderDataset(args.path, sampling_rate=22050, pad_to=780283, skip=args.resume)
+    dataloader = DataLoader(dataset, args.batch_size, num_workers=4)
 
     if args.cuda >= 0:
         model = model.cuda(args.cuda)
         stft = stft.cuda(args.cuda)
 
+    start = None
+    total_duration = 0
     output = open(args.output_file, 'w')
     with torch.no_grad():
         for e, batch in enumerate(tqdm(dataloader)):
+            if start is None:
+                start = time()  # Do this here because the first batch often takes a **long** time to load and we are not measuring dataloader performance.
             clip = batch['clip']
+            total_duration += clip.shape[0] * clip.shape[-1] / 22050
             if args.cuda >= 0:
                 clip = clip.cuda(args.cuda)
             mels = stft(clip)
             tokens = model.inference(mels, num_beams=args.num_beams)
             for b in range(tokens.shape[0]):
                 text = tokenizer.decode(tokens[b])
-                output.write(f'{batch["path"][b]}\t{text}\n')
+                relpath = os.path.relpath(batch['path'][b], args.path).replace('\\', '/')
+                output.write(f'{text}\t{relpath}\n')
             output.flush()
+    stop = time()
+    elapsed = stop - start
+    print(f'Total elapsed: {elapsed}, processing time per second of audio input: {elapsed / total_duration} RTPR: {total_duration / elapsed}')
 

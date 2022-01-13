@@ -12,7 +12,7 @@ from utils import load_audio
 
 PRETRAINED_MODELS_IDS = {
     # Base URL to use (as of 1/2022.. damn you Google..) https://drive.google.com/file/d/{id}
-    'medium': '1BW-inL6PJra_rjK1q9gzKOakmgv13nyd',
+    'small': '1HUTWlHiyrZrAOdHPFZR9KY-iuEQoGAOs',
     'large': '1tXm6vZt-jwkvfYC4hkW7OGkylvH2Xdo2',
 }
 
