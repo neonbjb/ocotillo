@@ -45,14 +45,14 @@ from large.
 
 | Model                      | Params (Million) | MAC (Billion) | WER Librispeech Clean Test | WER Mozilla CV Test | RTPR
 |----------------------------|------------------|---------------|----------------------------|---------------------|-----------------------------
-| ocotillo small 1-beam      | 21               | 5.0           | 2.6                        |                     | 720                        
-| ocotillo small 8-beam      | 21               | 5.0           | 1.92                       |                     | 140.8                     
-| ocotillo large 1-beam      | 68               | 16.4          | 1.47                       |                     | 441.6
-| ocotillo large 8-beam      | 68               | 16.4          | 1.32                       |                     | 72.8
-| wav2vec 960h*              |                  |               | 1.8                        |                     |
-| deepspeech**               |                  |               | 7.1                        | N/A                 |
+| ocotillo small 1-beam      | 21               | 5.0           |                            |                     | 720                        
+| ocotillo small 8-beam      | 21               | 5.0           |                            |                     | 140.8                     
+| ocotillo large 1-beam      | 68               | 16.4          |                            |                     | 441.6
+| ocotillo large 16-beam     | 68               | 16.4          | 6.57                       |                     | 42.2
+| wav2vec2 base 960h*        | 94               | 74.1          | 2.1                        |                     |
+| deepspeech**               | 87               | 15.7          | 7.1                        | N/A                 |
 
-*: Best score; Large-LV60k from https://arxiv.org/pdf/2006.11477v3.pdf. Model size metrics computed from HuggingFace implementation (does not include Language Model).
+*: Best score; Base-LV60k from https://arxiv.org/pdf/2006.11477v3.pdf. Model size metrics computed from HuggingFace implementation (does not include Language Model).
 
 **: https://github.com/SeanNaren/deepspeech.pytorch/releases
 
@@ -65,7 +65,7 @@ I measured the RTPR of ocotillo-small and ocotillo-large on a Ryzen 5800x CPU be
 
 | Model                     | RTPR on CPU
 |---------------------------|-----------------------------
-| ocotillo small 1-beam     |
+| ocotillo small 1-beam     | 32.0
 | ocotillo large 1-beam     |
 
 *Note that audio inputs to the model are padded to the same size as the largest clip in a batch. This results in
