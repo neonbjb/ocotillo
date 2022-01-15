@@ -18,6 +18,7 @@ class AudioFolderDataset(torch.utils.data.Dataset):
             # Recover gracefully. It really sucks when we outright fail.
             return self[index+1]
 
+        orig_length = audio_norm.shape[-1]
         if audio_norm.shape[-1] > self.pad_to:
             print(f"Warning - {path} has a longer audio clip than is allowed: {audio_norm.shape[-1]}; allowed: {self.pad_to}. "
                   f"Truncating the clip, though this will likely invalidate the prediction.")
@@ -29,6 +30,7 @@ class AudioFolderDataset(torch.utils.data.Dataset):
 
         return {
             'clip': audio_norm,
+            'samples': orig_length,
             'path': path,
         }
 

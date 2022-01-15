@@ -49,7 +49,7 @@ from large.
 | ocotillo small 8-beam      | 21               | 5.0           |                            |                     | 140.8                     
 | ocotillo large 1-beam      | 68               | 16.4          |                            |                     | 441.6
 | ocotillo large 16-beam     | 68               | 16.4          | 6.57                       |                     | 42.2
-| wav2vec2 base 960h*        | 94               | 74.1          | 2.1                        |                     |
+| wav2vec2 large 960h*       | 0                | 0             | 2.1                        |                     | 240
 | deepspeech**               | 87               | 15.7          | 7.1                        | N/A                 |
 
 *: Best score; Base-LV60k from https://arxiv.org/pdf/2006.11477v3.pdf. Model size metrics computed from HuggingFace implementation (does not include Language Model).
