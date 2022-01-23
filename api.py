@@ -1,53 +1,15 @@
-import os
-
 import torch
 import torchaudio
-
-from tqdm import tqdm
-
-from gpt_asr_hf import GptAsrHf, MODEL_CONFIGS
-from mel import MEL
-from tokenizer import VoiceBpeTokenizer
 from utils import load_audio
-
-PRETRAINED_MODELS_IDS = {
-    # Base URL to use (as of 1/2022.. damn you Google..) https://drive.google.com/file/d/{id}
-    'small': '1HUTWlHiyrZrAOdHPFZR9KY-iuEQoGAOs',
-    'large': '1tXm6vZt-jwkvfYC4hkW7OGkylvH2Xdo2',
-}
-
-
-class DownloadProgressBar(tqdm):
-    def update_to(self, b=1, bsize=1, tsize=None):
-        if tsize is not None:
-            self.total = tsize
-        self.update(b * bsize - self.n)
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
 
 class Transcriber:
-    def __init__(self, model_path=None, num_beams=1, model_config='large',
-                 tokenizer_params_path='data/bpe_lowercase_asr_256.json',
-                 mel_norms_path='data/mel_norms.pth', on_cuda=True, cuda_device=0,
-                 pretrained_models_download_path='.weights/'):
-        self.tokenizer = VoiceBpeTokenizer(tokenizer_params_path)
-        self.mel = MEL(mel_norms_path)
-        self.model = GptAsrHf(**MODEL_CONFIGS[model_config]).eval()
-        if model_path is None:
-            pretrained_model_file = f'{pretrained_models_download_path}/{model_config}.pth'
-            if not os.path.exists(pretrained_model_file):
-                print("Downloading pretrained model for use with transcription..")
-                os.makedirs(pretrained_models_download_path, exist_ok=True)
-                id = PRETRAINED_MODELS_IDS[model_config]
-                import gdown  # If you do not wish to use this dep, download the files yourself.
-                gdown.download(output=pretrained_model_file, quiet=False, id=id)
-                print("Done.")
-            model_path = pretrained_model_file
-
-        self.model.load_state_dict(torch.load(model_path, map_location='cpu'))
-        self.num_beams = num_beams
+    def __init__(self, model_config='large', on_cuda=True, cuda_device=0):
+        self.model = Wav2Vec2ForCTC.from_pretrained(f"facebook/wav2vec2-{model_config}-960h")
+        self.processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
         if on_cuda:
             self.model = self.model.cuda(cuda_device)
-            self.mel = self.mel.cuda(cuda_device)
             self.device = 'cuda'
         else:
             self.device = 'cpu'
@@ -73,16 +35,16 @@ class Transcriber:
         """
         if not isinstance(audio_data, torch.Tensor):
             audio_data = torch.tensor(audio_data, dtype=torch.float)  # This makes valid inputs either a torch tensor a numpy array.
-        if sample_rate != self.mel.mel_stft.sample_rate:
-            audio_data = torchaudio.functional.resample(audio_data, sample_rate, self.mel.mel_stft.sample_rate)
+        if sample_rate != 16000:
+            audio_data = torchaudio.functional.resample(audio_data, sample_rate, 16000)
         audio_data = audio_data.to(self.device)
-        mels = self.mel(audio_data)
         with torch.no_grad():
-            tokens = self.model.inference(mels, num_beams=self.num_beams)
-        return [self.tokenizer.decode(toks) for toks in tokens]
+            logits = self.model(audio_data).logits
+            tokens = torch.argmax(logits, dim=-1)
+        return self.processor.batch_decode(tokens)
 
 
 if __name__ == '__main__':
-    transcriber = Transcriber(num_beams=4, on_cuda=False)
+    transcriber = Transcriber(on_cuda=False)
     audio = load_audio('data/obama.mp3', 44100)
     print(transcriber.transcribe(audio, 44100))
