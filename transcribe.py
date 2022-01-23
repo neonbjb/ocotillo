@@ -21,10 +21,12 @@ if __name__ == "__main__":
     parser.add_argument('--resume', default=0, type=int, help='Skip the first <n> audio tracks.')
     parser.add_argument('--batch_size', default=8, type=int, help='Number of audio files to process at a time. Larger batches are more efficient on a GPU.')
     parser.add_argument('--cuda', default=-1, type=int, help='The cuda device to perform inference on. -1 (or default) means use the CPU.')
+    parser.add_argument('--output_tokens', default=False, type=bool, help='Whether or not to output the CTC codes. Useful for text alignment.')
+    parser.add_argument('--model_type', default='large', type='str', help='Which model to load. "large" or "base".')
     args = parser.parse_args()
 
-    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h").to("cuda")
-    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
+    model = Wav2Vec2ForCTC.from_pretrained(f"facebook/wav2vec2-{args.model_type}-960h").to("cuda")
+    processor = Wav2Vec2Processor.from_pretrained(f"facebook/wav2vec2-{args.model_type}-960h")
 
     dataset = AudioFolderDataset(args.path, sampling_rate=16000, pad_to=566400, skip=args.resume)
     dataloader = DataLoader(dataset, args.batch_size, num_workers=2)
@@ -52,7 +54,10 @@ if __name__ == "__main__":
             for b in range(tokens.shape[0]):
                 text = processor.batch_decode(tokens)
                 relpath = os.path.relpath(batch['path'][b], args.path).replace('\\', '/')
-                output.write(f'{text[b].lower()}\t{relpath}\t{tokens[b].tolist()}\n')
+                if args.output_tokens:
+                    output.write(f'{text[b].lower()}\t{relpath}\t{tokens[b].tolist()}\n')
+                else:
+                    output.write(f'{text[b].lower()}\t{relpath}\n')
             output.flush()
     stop = time()
     elapsed = stop - start
