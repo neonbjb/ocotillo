@@ -24,7 +24,29 @@ and [this one on leveraging a language model with wav2vec](https://huggingface.c
 
 ## Instructions for use
 
-I provide three entry points for using these models:
+There are several ways to use ocotillo:
+
+### Simple CLI
+
+This is the most dead-simple way to get started with ocotillo. Find an audio clip on your computer (it must be less
+than 30 seconds in length), and run:
+
+```shell
+ocotillo path/to/audio/clip.mp3
+```
+
+### Batch CLI
+
+A script is included, transcribe.py. This script searches for all audio files in a directory and
+transcribes all the files found. Sample usage:
+
+```shell
+python transcribe.py --path /my/audio/folder --model_path pretrained_model_path.pth --cuda=0
+```
+
+This will use a GPU to transcribe audio files found in /my/audio/folder. Transcription results
+will be written to results.tsv.
+
 
 ### API
 
@@ -46,18 +68,6 @@ Transcriber works with numpy arrays and torch arrays. Audio data must be fp32 on
 notebook that uses the API is included:
 asr_demo.ipynb.
 
-### CLI
-
-A script is included, transcribe.py. This script searches for all audio files in a directory and
-transcribes all the files found. Sample usage:
-
-```shell
-python transcribe.py --path /my/audio/folder --model_path pretrained_model_path.pth --cuda=0
-```
-
-This will use a GPU to transcribe audio files found in /my/audio/folder. Transcription results
-will be written to results.tsv.
-
 ### HTTP server with [Mycroft](https://github.com/MycroftAI) support
 
 This will allow you to run a speech-to-text server that operates the ocotillo model. The protocol was specifically
@@ -75,7 +85,7 @@ responses take less than a tenth of a second (most of which is data processing -
 3. (optional) Install Mycroft: https://mycroft.ai/get-started/
 4. From mycroft build directory: `bin/mycroft-config edit user`
 5. Add the following code:
-    ```
+    ```json
     {
       "stt": {
         "deepspeech_server": {

@@ -40,7 +40,7 @@ class Transcriber:
         with torch.no_grad():
             logits = self.model(audio_data)[0]
             tokens = torch.argmax(logits, dim=-1)
-        return self.processor.decode(tokens[0])
+        return self.processor.batch_decode(tokens)
 
 
 if __name__ == '__main__':
