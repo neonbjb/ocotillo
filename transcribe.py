@@ -43,7 +43,8 @@ if __name__ == "__main__":
         for e, batch in enumerate(tqdm(dataloader)):
             if start is None:
                 start = time()  # Do this here because the first batch often takes a **long** time to load and we are not measuring dataloader performance.
-            clip = batch['clip'][:, :batch['samples'].max()]
+            max_sample_size = batch['samples'].max()
+            clip = batch['clip'][:, :max_sample_size]
             total_duration += clip.shape[0] * clip.shape[-1] / 16000
             clip = [b.numpy() for b in clip]  # Because the processor takes in numpy values.
             clip = processor(clip, return_tensors='pt', padding='longest', sampling_rate=16000).input_values
@@ -53,12 +54,16 @@ if __name__ == "__main__":
             logits = model(clip).logits
             tokens = torch.argmax(logits, dim=-1)
             for b in range(tokens.shape[0]):
-                text = processor.batch_decode(tokens)
+                # Chop off all the padding for each batch element.
+                usage_percent = batch['samples'][b] / max_sample_size
+                sub_tokens = tokens[b, :int(usage_percent*tokens.shape[-1])]
+                # Decode and write to the output file.
+                text = processor.decode(sub_tokens)
                 relpath = os.path.relpath(batch['path'][b], args.path).replace('\\', '/')
                 if args.output_tokens:
-                    output.write(f'{text[b].lower()}\t{relpath}\t{tokens[b].tolist()}\n')
+                    output.write(f'{text.lower()}\t{relpath}\t{sub_tokens.tolist()}\n')
                 else:
-                    output.write(f'{text[b].lower()}\t{relpath}\n')
+                    output.write(f'{text.lower()}\t{relpath}\n')
             output.flush()
     stop = time()
     elapsed = stop - start
