@@ -20,12 +20,16 @@ def find_audio_files(base_path, globs=['*.wav', '*.mp3', '*.ogg', '*.flac']):
     return paths
 
 
-def load_audio(audiopath, sampling_rate):
-    if audiopath[-4:] == '.wav':
-        audio, lsr = load_wav_to_torch(audiopath)
+def load_audio(audiopath, sampling_rate, raw_data=None):
+    if raw_data is not None:
+        # Assume the data is wav format. SciPy's reader can read raw WAV data from a BytesIO wrapper.
+        audio, lsr = load_wav_to_torch(raw_data)
     else:
-        audio, lsr = open_audio(audiopath)
-        audio = torch.FloatTensor(audio)
+        if audiopath[-4:] == '.wav':
+            audio, lsr = load_wav_to_torch(audiopath)
+        else:
+            audio, lsr = open_audio(audiopath)
+            audio = torch.FloatTensor(audio)
 
     # Remove any channel data.
     if len(audio.shape) > 1:
