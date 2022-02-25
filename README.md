@@ -1,4 +1,4 @@
-# ocotillo - A fast, accurate and super simple speech recognition model
+# 🌵 ocotillo - A fast, accurate and super simple speech recognition model
 
 This repo is for ocotillo, a pytorch-based ML model that does state-of-the-art English speech transcription. While this
 is not necessarily difficult to accomplish with the libraries available today, every one that I have run to is 
