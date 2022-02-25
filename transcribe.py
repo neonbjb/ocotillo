@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_tokens', default=False, type=bool, help='Whether or not to output the CTC codes. Useful for text alignment.')
     args = parser.parse_args()
 
-    model, processor = load_model(f'cuda:{args.cuda}' if args.cuda != -1 else 'cpu')
+    model, processor = load_model(f'cuda:{args.cuda}' if args.cuda != -1 else 'cpu', use_torchscript=True)
     dataset = AudioFolderDataset(args.path, sampling_rate=16000, pad_to=566400, skip=args.resume)
     dataloader = DataLoader(dataset, args.batch_size, num_workers=2)
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
             if args.cuda >= 0:
                 clip = clip.cuda(args.cuda)
 
-            logits = model(clip).logits
+            logits = model(clip)[0]
             tokens = torch.argmax(logits, dim=-1)
             for b in range(tokens.shape[0]):
                 # Chop off all the padding for each batch element.

@@ -38,9 +38,9 @@ class Transcriber:
             audio_data = torchaudio.functional.resample(audio_data, sample_rate, 16000)
         audio_data = audio_data.to(self.device)
         with torch.no_grad():
-            logits = self.model(audio_data).logits
+            logits = self.model(audio_data)[0]
             tokens = torch.argmax(logits, dim=-1)
-        return self.processor.batch_decode(tokens)
+        return self.processor.decode(tokens[0])
 
 
 if __name__ == '__main__':

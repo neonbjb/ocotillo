@@ -2,8 +2,11 @@
 
 This repo is for ocotillo, a pytorch-based ML model that does state-of-the-art English speech transcription. While this
 is not necessarily difficult to accomplish with the libraries available today, every one that I have run to is 
-excessively complicated and therefore difficult to use. Ocotillo is dirt simple. It does its job in under 500 lines
-of code, and it does a **good** job.
+excessively complicated and therefore difficult to use. Ocotillo is dirt simple. The APIs I offer have almost no
+configuration options: just feed your speech in and go.
+
+It's also fast. It traces the underlying model to torchscript. This means most of the heavy lifting is done in C++.
+The transcribe script achieves a processing rate <>x faster than realtime on an NVIDIA A5000 GPU.
 
 ## Model Description
 

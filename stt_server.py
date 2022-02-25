@@ -31,7 +31,7 @@ def create_app(cfg={}):
             if use_cuda:
                 clip_norm = clip_norm.to(dev)
             model_inference_start = time()
-            logits = model(clip_norm).logits
+            logits = model(clip_norm)[0]
             inference_latency = time() - model_inference_start
             tokens = torch.argmax(logits, dim=-1)
             text = processor.decode(tokens[0])
