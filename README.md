@@ -29,7 +29,7 @@ data into text. Usage looks like the following:
 
 ```python
 from transcribe import Transcriber
-transcriber = Transcriber(model_config='large', on_cuda=False)
+transcriber = Transcriber(on_cuda=False)
 audio = load_audio('data/obama.mp3', 44100)
 print(transcriber.transcribe(audio, sample_rate=44100))
 ```
@@ -48,8 +48,7 @@ A script is included, transcribe.py. This script searches for all audio files in
 transcribes all the files found. Sample usage:
 
 ```shell
-python transcribe.py --path /my/audio/folder --model_path pretrained_model_path.pth --model_type large
-                     --cuda=0
+python transcribe.py --path /my/audio/folder --model_path pretrained_model_path.pth --cuda=0
 ```
 
 This will use a GPU to transcribe audio files found in /my/audio/folder. Transcription results
