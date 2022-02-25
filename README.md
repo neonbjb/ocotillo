@@ -59,9 +59,12 @@ will be written to results.tsv.
 This will allow you to run a speech-to-text server that operates the ocotillo model. The protocol was specifically
 designed to work with the open source assistant Mycroft.
 
-Responses are fast and high quality. On a modern CPU, expect responses to most queries in under a second. On CUDA,
+This server does not need to run on the same device as you run mycroft (but your mycroft device needs to be on the
+same network, or you need to expose your server to the web - not recommended).
+
+Responses are fast and high quality. On a modern x86 CPU, expect responses to most queries in under a second. On CUDA,
 responses take less than a tenth of a second (most of which is data processing - model inference is on the order of 
-10s of milliseconds).
+10s of milliseconds). I have not tested ocotillo on embedded hardware like the Pi.
 
 1. Install Flask: `pip install flask`.
 2. Start server: `python stt_server.py`. CUDA device 0 is used by default, specify `--cuda=-1` to run on CPU.
