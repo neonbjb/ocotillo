@@ -1,20 +1,19 @@
 # ocotillo - A fast, accurate and super simple speech recognition model
 
-This repo is for ocotillo, a pytorch-based ML model that does state-of-the-art English speech recognition. While this
+This repo is for ocotillo, a pytorch-based ML model that does state-of-the-art English speech transcription. While this
 is not necessarily difficult to accomplish with the libraries available today, every one that I have run to is 
 excessively complicated and therefore difficult to use. Ocotillo is dirt simple. It does its job in under 500 lines
 of code, and it does a **good** job.
 
 ## Model Description
 
-ocotillo uses a model pre-trained with [wav2vec2](https://arxiv.org/abs/2006.11477) and fine tuned for speech recognition.
+ocotillo uses a model pre-trained with [wav2vec2](https://arxiv.org/abs/2006.11477) and fine-tuned for speech recognition.
 This model is hosted by HuggingFace's transformers API, and pretrained weights have been provided by Facebook/Meta.
+The specific model being used is [jbetker/wav2vec2-large-robust-ft-libritts-voxpopuli](https://huggingface.co/jbetker/wav2vec2-large-robust-ft-libritts-voxpopuli),
+which I personally fine-tuned from existing wav2vec2 checkpoints to also predict punctuation. This makes ocotillo useful
+for generating transcriptions which will be used for TTS.
 
-To be frank - this repo is nothing special. It is merely a collection of scripts that ties together a few loose ends
-to produce a very easy-to-use tool for speech transcription. The quality of the outputs is superb. It is also quite
-fast, thanks to CTC decoding.
-
-A special thanks goes out to [Patrick von Platen](), who contributed (wrote?) the model to huggingface and maintains
+A special thanks goes out to [Patrick von Platen](https://huggingface.co/patrickvonplaten), who contributed (wrote?) the model to huggingface and maintains
 the API that does all the heavy lifting. You could easily re-build this repo by simply reading all of his fantastic
 blog posts. In particular, [this one on finetuning wav2vec](https://huggingface.co/blog/fine-tune-wav2vec2-english)
 and [this one on leveraging a language model with wav2vec](https://huggingface.co/blog/wav2vec2-with-ngram).
