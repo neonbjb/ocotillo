@@ -20,7 +20,7 @@ and [this one on leveraging a language model with wav2vec](https://huggingface.c
 
 ## Instructions for use
 
-I provide two entry points for using these models:
+I provide three entry points for using these models:
 
 ### API
 
@@ -53,6 +53,32 @@ python transcribe.py --path /my/audio/folder --model_path pretrained_model_path.
 
 This will use a GPU to transcribe audio files found in /my/audio/folder. Transcription results
 will be written to results.tsv.
+
+### HTTP server with [Mycroft](https://github.com/MycroftAI) support
+
+This will allow you to run a speech-to-text server that operates the ocotillo model. The protocol was specifically
+designed to work with the open source assistant Mycroft.
+
+Responses are fast and high quality. On a modern CPU, expect responses to most queries in under a second. On CUDA,
+responses take less than a tenth of a second (most of which is data processing - model inference is on the order of 
+10s of milliseconds).
+
+1. Install Flask: `pip install flask`.
+2. Start server: `python stt_server.py`. CUDA device 0 is used by default, specify `--cuda=-1` to run on CPU.
+3. (optional) Install Mycroft: https://mycroft.ai/get-started/
+4. From mycroft build directory: `bin/mycroft-config edit user`
+5. Add the following code:
+    ```
+    {
+      "stt": {
+        "deepspeech_server": {
+          "uri": "http://<your_ip_address>/stt"
+        },
+        "module": "deepspeech_server"
+      },
+    }
+    ```
+6. Restart mycroft: `./stop-mycroft.sh && ./start-mycroft.sh`
 
 ### Limitations
 
