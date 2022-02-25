@@ -1,20 +1,17 @@
 import torch
 import torchaudio
+
+from model_loader import load_model
 from utils import load_audio
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor, Wav2Vec2FeatureExtractor, Wav2Vec2CTCTokenizer
 
 
 class Transcriber:
     def __init__(self, on_cuda=True, cuda_device=0):
-        self.model = Wav2Vec2ForCTC.from_pretrained("jbetker/wav2vec2-large-robust-ft-libritts-voxpopuli")
-        feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(f"facebook/wav2vec2-large-960h")
-        tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('jbetker/tacotron_symbols')
-        self.processor = Wav2Vec2Processor(feature_extractor, tokenizer)
         if on_cuda:
-            self.model = self.model.cuda(cuda_device)
             self.device = 'cuda'
         else:
             self.device = 'cpu'
+        self.model, self.processor = load_model(self.device)
 
     def transcribe(self, audio_data, sample_rate):
         """
