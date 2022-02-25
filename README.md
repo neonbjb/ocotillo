@@ -6,7 +6,8 @@ excessively complicated and therefore difficult to use. Ocotillo is dirt simple.
 configuration options: just feed your speech in and go.
 
 It's also fast. It traces the underlying model to torchscript. This means most of the heavy lifting is done in C++.
-The transcribe script achieves a processing rate <>x faster than realtime on an NVIDIA A5000 GPU.
+The transcribe.py script achieves a processing rate 329x faster than realtime on an NVIDIA A5000 GPU when transcribing
+batches of 16 audio files at once.
 
 ## Model Description
 
