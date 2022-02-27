@@ -5,3 +5,5 @@ torchaudio>0.9
 audio2numpy
 transformers
 tokenizers
+requests
+ffmpeg

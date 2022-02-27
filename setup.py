@@ -22,6 +22,8 @@ setuptools.setup(
         'audio2numpy',
         'transformers',
         'tokenizers',
+        'requests',
+        'ffmpeg',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
