@@ -31,7 +31,7 @@ class Transcriber:
         if audio_data.shape[-1] > 30 * sample_rate:
             return self._process_large_clip(audio_data, sample_rate)
         else:
-            return self.transcribe_batch(audio_data, 16000)[0]
+            return self.transcribe_batch(audio_data, sample_rate)[0]
 
     def transcribe_batch(self, audio_data, sample_rate):
         """
