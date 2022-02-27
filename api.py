@@ -7,7 +7,7 @@ from model_loader import load_model
 from utils import load_audio
 
 def _append_with_at_least_one_space(text, new_text):
-    if not text.endswith(' '):
+    if not text.endswith(' ') and not new_text.startswith(' '):
         text = text + " "
     return text + new_text
 
