@@ -18,8 +18,8 @@ which I personally fine-tuned from existing wav2vec2 checkpoints to also predict
 for generating transcriptions which will be used for TTS.
 
 A special thanks goes out to [Patrick von Platen](https://huggingface.co/patrickvonplaten), who contributed (wrote?) the model to huggingface and maintains
-the API that does all the heavy lifting. You could easily re-build this repo by simply reading all of his fantastic
-blog posts. In particular, [this one on finetuning wav2vec](https://huggingface.co/blog/fine-tune-wav2vec2-english)
+the API that does all the heavy lifting. His fantastic blog posts were instrumental in building this repo. 
+In particular, [this one on finetuning wav2vec](https://huggingface.co/blog/fine-tune-wav2vec2-english)
 and [this one on leveraging a language model with wav2vec](https://huggingface.co/blog/wav2vec2-with-ngram).
 
 ## Instructions for use
