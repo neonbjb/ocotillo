@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name="ocotillo",
     packages=["."],
-    version="1.0.1",
+    version="1.0.2",
     author="James",
     author_email="james@adamant.ai",
     description="A simple & fast speech transcription toolkit",
@@ -28,6 +28,6 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    download_url = 'https://github.com/neonbjb/ocotillo/archive/refs/tags/1.0.0.tar.gz',
+    download_url = 'https://github.com/neonbjb/ocotillo/archive/refs/tags/1.0.2.tar.gz',
     python_requires=">=3.6",
 )

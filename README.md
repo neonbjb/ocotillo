@@ -34,8 +34,7 @@ pip install -r requirements.txt
 
 ### Simple CLI
 
-This is the most dead-simple way to get started with ocotillo. Find an audio clip on your computer (it must be less
-than 30 seconds in length), and run:
+This is the most dead-simple way to get started with ocotillo. Find an audio clip on your computer, and run:
 
 ```shell
 ocotillo path/to/audio/clip.mp3
@@ -102,9 +101,3 @@ responses take less than a tenth of a second (most of which is data processing -
     }
     ```
 6. Restart mycroft: `./stop-mycroft.sh && ./start-mycroft.sh`
-
-### Limitations
-
-ocotillo currently has input size limitations. Because it is built on a transformer architecture, the memory cost with
-respect to sequence size is quadratic in nature. In the future I would like to build automatic chunking or streaming 
-ASR which could be used to transcribe large contiguous audio samples.
