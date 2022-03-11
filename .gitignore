@@ -101,3 +101,4 @@ venv.bak/
 
 *.tsv
 /torchscript/traced_model*
+/ocotillo.onnx
