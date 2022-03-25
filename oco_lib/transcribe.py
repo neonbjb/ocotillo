@@ -11,7 +11,7 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from dataset import AudioFolderDataset
+from oco_lib.dataset import AudioFolderDataset
 from model_loader import load_model
 
 if __name__ == "__main__":

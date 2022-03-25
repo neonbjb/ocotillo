@@ -1,6 +1,6 @@
 import sys
 import torch.utils.data
-from utils import find_audio_files, load_audio
+from oco_lib.utils import find_audio_files, load_audio
 
 
 class AudioFolderDataset(torch.utils.data.Dataset):

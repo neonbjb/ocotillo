@@ -1,7 +1,7 @@
 import argparse
 
-from api import Transcriber
-from utils import load_audio
+from oco_lib.api import Transcriber
+from oco_lib.utils import load_audio
 
 if __name__ == '__main__':
     """

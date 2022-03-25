@@ -1,4 +1,3 @@
-import functools
 import os
 from time import time
 
@@ -33,7 +32,7 @@ def trace_torchscript_model(dev_type='cpu', load_from_cache=True):
     model, extractor = load_model(dev_type, use_torchscript=False)
     with torch.autocast(dev_type) and torch.no_grad():
         traced_model = torch.jit.trace(model, (torch.randn((1,16000), device=dev_type)))
-    os.makedirs('torchscript', exist_ok=True)
+    os.makedirs('../torchscript', exist_ok=True)
     torch.jit.save(traced_model, output_trace_cache_file)
     print("Done tracing.")
     return model
@@ -53,9 +52,9 @@ def test_onnx_model():
     onnx.checker.check_model(model)
 
     import onnxruntime
-    from utils import load_audio
+    from oco_lib.utils import load_audio
     from tqdm import tqdm
-    onnx_model = onnxruntime.InferenceSession('ocotillo.onnx')
+    onnx_model = onnxruntime.InferenceSession('../ocotillo.onnx')
     torch_model, _ = load_model('cpu', use_torchscript=True)
 
     audio = load_audio('data/obama.mp3', 16000).unsqueeze(0)

@@ -4,7 +4,7 @@ import torch
 import torchaudio
 
 from model_loader import load_model
-from utils import load_audio
+from oco_lib.utils import load_audio
 
 def _append_with_at_least_one_space(text, new_text):
     if not text.endswith(' ') and not new_text.startswith(' '):
@@ -94,7 +94,7 @@ class Transcriber:
 
 
 if __name__ == '__main__':
-    transcriber = Transcriber(on_cuda=False)
+    transcriber = Transcriber(on_cuda=True)
     audio = load_audio('data/obama.mp3', 44100)
     print(transcriber.transcribe(audio, 44100))
     start = time()
