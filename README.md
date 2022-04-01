@@ -59,7 +59,7 @@ This repo contains a class called transcribe.Transcriber, which can be used to t
 data into text. Usage looks like the following:
 
 ```python
-from oco_lib.transcribe import Transcriber
+from ocotillo.transcribe import Transcriber
 
 transcriber = Transcriber(on_cuda=False)
 audio = load_audio('data/obama.mp3', 44100)

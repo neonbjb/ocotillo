@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="ocotillo",
-    packages=["."],
-    version="1.0.3",
+    packages=["ocotillo"],
+    version="1.0.5",
     author="James",
     author_email="james@adamant.ai",
     description="A simple & fast speech transcription toolkit",

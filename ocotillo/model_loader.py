@@ -52,7 +52,7 @@ def test_onnx_model():
     onnx.checker.check_model(model)
 
     import onnxruntime
-    from oco_lib.utils import load_audio
+    from ocotillo.utils import load_audio
     from tqdm import tqdm
     onnx_model = onnxruntime.InferenceSession('../ocotillo.onnx')
     torch_model, _ = load_model('cpu', use_torchscript=True)

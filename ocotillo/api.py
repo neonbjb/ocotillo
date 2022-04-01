@@ -3,8 +3,8 @@ from time import time
 import torch
 import torchaudio
 
-from model_loader import load_model
-from oco_lib.utils import load_audio
+from ocotillo.model_loader import load_model
+from ocotillo.utils import load_audio
 
 def _append_with_at_least_one_space(text, new_text):
     if not text.endswith(' ') and not new_text.startswith(' '):

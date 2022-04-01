@@ -5,8 +5,8 @@ from time import time
 import torch
 from flask import Flask, request
 
-from oco_lib.model_loader import load_model
-from oco_lib.utils import load_audio
+from ocotillo.model_loader import load_model
+from ocotillo.utils import load_audio
 
 
 def create_app(cfg={}):

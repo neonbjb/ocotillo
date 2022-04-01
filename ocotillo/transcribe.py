@@ -11,8 +11,8 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from oco_lib.dataset import AudioFolderDataset
-from model_loader import load_model
+from ocotillo.dataset import AudioFolderDataset
+from ocotillo.model_loader import load_model
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
