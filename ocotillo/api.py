@@ -12,12 +12,12 @@ def _append_with_at_least_one_space(text, new_text):
     return text + new_text
 
 class Transcriber:
-    def __init__(self, on_cuda=True, cuda_device=0):
+    def __init__(self, phonetic=False, on_cuda=True, cuda_device=0):
         if on_cuda:
-            self.device = 'cuda'
+            self.device = f'cuda:{cuda_device}'
         else:
             self.device = 'cpu'
-        self.model, self.processor = load_model(self.device)
+        self.model, self.processor = load_model(self.device, phonetic=phonetic)
 
     def transcribe(self, audio_data, sample_rate):
         """
@@ -94,10 +94,10 @@ class Transcriber:
 
 
 if __name__ == '__main__':
-    transcriber = Transcriber(on_cuda=True)
-    audio = load_audio('data/obama.mp3', 44100)
+    transcriber = Transcriber(on_cuda=True, phonetic=True)
+    audio = load_audio('../data/obama.mp3', 44100)
     print(transcriber.transcribe(audio, 44100))
     start = time()
-    audio = load_audio('data/obama_long.mp3', 16000)
+    audio = load_audio('../data/obama_long.mp3', 16000)
     print(transcriber.transcribe(audio, 16000))
     print(f"Elapsed: {time() - start}")

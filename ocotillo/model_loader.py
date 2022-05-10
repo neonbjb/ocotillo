@@ -5,26 +5,30 @@ import torch
 from transformers import Wav2Vec2ForCTC, Wav2Vec2FeatureExtractor, Wav2Vec2CTCTokenizer, Wav2Vec2Processor
 
 
-def load_model(device, use_torchscript=False):
+def load_model(device, phonetic=False, use_torchscript=False):
     """
     Utility function to load the model and corresponding processor to the specified device. Supports loading
     torchscript models when they have been pre-built (which is accomplished by running this file.)
     """
+    model_name = "facebook/wav2vec2-lv-60-espeak-cv-ft" if phonetic else "jbetker/wav2vec2-large-robust-ft-libritts-voxpopuli"
     if use_torchscript:
-        model = trace_torchscript_model('cuda' if 'cuda' in device else 'cpu')
+        model = trace_torchscript_model(model_name.split('/')[-1].replace('-', '_'), 'cuda' if 'cuda' in device else 'cpu')
         model = model.to(device)
     else:
-        model = Wav2Vec2ForCTC.from_pretrained("jbetker/wav2vec2-large-robust-ft-libritts-voxpopuli").to(device)
+        model = Wav2Vec2ForCTC.from_pretrained(model_name).to(device)
         model.config.return_dict = False
         model.eval()
-    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(f"facebook/wav2vec2-large-960h")
-    tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('jbetker/tacotron_symbols')
-    processor = Wav2Vec2Processor(feature_extractor, tokenizer)
+    if phonetic:
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-lv-60-espeak-cv-ft")
+    else:
+        feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(f"facebook/wav2vec2-large-960h")
+        tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('jbetker/tacotron-symbols')
+        processor = Wav2Vec2Processor(feature_extractor, tokenizer)
     return model, processor
 
 
-def trace_torchscript_model(dev_type='cpu', load_from_cache=True):
-    output_trace_cache_file = f'torchscript/traced_model_{dev_type}.pth'
+def trace_torchscript_model(model_name, dev_type='cpu', load_from_cache=True):
+    output_trace_cache_file = f'torchscript/traced_{model_name}_{dev_type}.pth'
     if load_from_cache and os.path.exists(output_trace_cache_file):
         return torch.jit.load(output_trace_cache_file)
 
@@ -79,4 +83,3 @@ def test_onnx_model():
 if __name__ == '__main__':
     trace_onnx_model()
     test_onnx_model()
-    #trace_torchscript_model('cuda', load_from_cache=False)

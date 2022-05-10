@@ -18,13 +18,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', help='Input folder containing audio files you want transcribed.')
     parser.add_argument('--output_file', default='results.tsv', help='Where transcriptions will be placed.')
+    parser.add_argument('--phonetic', default=False, help='Whether or not to output phonetic symbols.')
     parser.add_argument('--resume', default=0, type=int, help='Skip the first <n> audio tracks.')
     parser.add_argument('--batch_size', default=8, type=int, help='Number of audio files to process at a time. Larger batches are more efficient on a GPU.')
     parser.add_argument('--cuda', default=-1, type=int, help='The cuda device to perform inference on. -1 (or default) means use the CPU.')
     parser.add_argument('--output_tokens', default=False, type=bool, help='Whether or not to output the CTC codes. Useful for text alignment.')
     args = parser.parse_args()
 
-    model, processor = load_model(f'cuda:{args.cuda}' if args.cuda != -1 else 'cpu', use_torchscript=True)
+    model, processor = load_model(f'cuda:{args.cuda}' if args.cuda != -1 else 'cpu', use_torchscript=True, phonetic=args.phonetic)
     dataset = AudioFolderDataset(args.path, sampling_rate=16000, pad_to=566400, skip=args.resume)
     dataloader = DataLoader(dataset, args.batch_size, num_workers=2)
 

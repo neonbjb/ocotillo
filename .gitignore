@@ -103,3 +103,5 @@ venv.bak/
 /torchscript/traced_model*
 /ocotillo.onnx
 /upload_notes.txt
+/torchscript/traced_wav2vec2_large_robust_ft_libritts_voxpopuli_cuda.pth
+/torchscript/traced_wav2vec2_lv_60_espeak_cv_ft_cuda.pth
