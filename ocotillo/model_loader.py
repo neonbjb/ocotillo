@@ -36,7 +36,7 @@ def trace_torchscript_model(model_name, dev_type='cpu', load_from_cache=True):
     model, extractor = load_model(dev_type, use_torchscript=False)
     with torch.autocast(dev_type) and torch.no_grad():
         traced_model = torch.jit.trace(model, (torch.randn((1,16000), device=dev_type)))
-    os.makedirs('../torchscript', exist_ok=True)
+    os.makedirs('torchscript', exist_ok=True)
     torch.jit.save(traced_model, output_trace_cache_file)
     print("Done tracing.")
     return model
