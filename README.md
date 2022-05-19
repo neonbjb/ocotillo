@@ -24,12 +24,16 @@ and [this one on leveraging a language model with wav2vec](https://huggingface.c
 
 ## Instructions for use
 
-There are several ways to use ocotillo, described below. First you need to clone it and install its dependencies:
+There are several ways to use ocotillo, described below. First you need to install PyTorch:
+
+[https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
+
+Then, clone ocotillo and install its dependencies:
 
 ```shell
 git clone https://github.com/neonbjb/ocotillo.git
 cd ocotillo
-pip install -r requirements.txt
+python setup.py install
 ```
 
 ### Simple CLI
